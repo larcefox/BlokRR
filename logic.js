@@ -13,32 +13,57 @@ canvas.addEventListener('mousemove', (e) => {
     mouseY = e.pageY - canvas.getBoundingClientRect().top;
 });
 
-for (let link of document.getElementsByClassName('shapeLink')){
-    link.onclick = shapeChange;
+function init() {
+    for (let link of document.getElementsByClassName('shapeLink')) {
+        link.onclick = shapeChange;
+    }
 }
 
-function shapeChange(e){
+function shapeChange(e) {
     figure = e.target.innerHTML;
-    console.log(figure);
+
 }
 
 //Конструктор фигуры
-function Shape(figure, outlineThick, outlineColor, outlineLine, x, y) {
-    this.clickCoords = [x, y]
+function Shape(figure, strokeWidth, strokeColor, strokeDasharray, x, y) {
+
+// <svg width="400" height="110">
+//         <rect width="300" height="100" style="fill:rgb(0,0,255);stroke-width:3;stroke:rgb(0,0,0)" />
+//</svg>
+
+    this.clickCoords = [x, y];
     this.figure = figure;
-    
     this.tag = document.createElement('svg');
     this.position = 'absolute';
     this.left = mouseX;
     this.top = mouseY;
-
     this.width = 1;
     this.height = 1;
+    this.strokeWidth = strokeWidth;
+
     this.updateStyle = () => {
         this.tag.style = 'top:' + this.top + 'px;' + 'left:' + this.left + 'px;' + 'position: ' + this.position + ';' + 'width:' + this.width + 'px;' + 'height:' + this.height + 'px;';
-        this.tag.id = shapes.length - 1
+        this.tag.id = shapes.length - 1;
+        switch(this.figure) {
+            case 'Rectangle':
+                this.tag.innerHTML = '<rect width="' + this.width + '" height="' + this.height + '" style="fill:rgb(0,0,255);stroke-width:' + this.strokeWidth + ';stroke:rgb(' + strokeColor + ')" />';
+                break;
+            case y:
+                // code block
+                break;
+            default:
+            // code block
+        }
     };
 }
+
+// <svg width="400" height="110">
+//         <rect width="300" height="100" style="fill:rgb(0,0,255);stroke-width:3;stroke:rgb(0,0,0)" />
+
+// <svg id="43" style="top: 280px; left: 250.5px; position: absolute; width: 312px; height: 161px;">
+//     <rect width="312" height="161" style="fill:rgb(0,0,255);stroke-width:1;stroke:rgb(0,0,0)"></rect>
+//     </svg>
+
 //Объект подписи размеров фигуры
 var shapeParams = {
     tag: document.createElement('p'),
@@ -59,7 +84,7 @@ let mousePressed = false;
 function mousedown() {
     if (!mousePressed) { //Prevent multimple loops!
         buttonPressed = true;
-        let element = new Shape(mouseX, mouseY);
+        let element = new Shape(figure, strokeWidth, strokeColor, strokeDasharray, mouseX, mouseY);
         element.updateStyle();
         shapes.push(element);
 
@@ -106,11 +131,11 @@ function mousedown() {
 }
 
 
-
 function mouseup(event) {
     if (mousePressed) { //Only stop if exists
         clearInterval(mousePressed);
-        mousePressed = false;        document.getElementById('elementParams').parentNode.removeChild(document.getElementById('elementParams'));
+        mousePressed = false;
+        document.getElementById('elementParams').parentNode.removeChild(document.getElementById('elementParams'));
     }
 }
 
@@ -129,6 +154,7 @@ function save() {
     a.click();
 }
 
+canvas.onload = init;
 canvas.addEventListener("mousedown", mousedown);
 canvas.addEventListener("mouseup", mouseup);
 canvas.addEventListener("mousewheel", save);
